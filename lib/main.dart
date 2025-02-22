@@ -1,143 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/screens/Gallery.dart';
+import 'package:my_app/screens/Popular.dart';
+import 'package:my_app/screens/Speciality.dart';
 
 void main() {
-  runApp(TravelApp());
+  runApp(MyApp());
 }
 
-class TravelApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      title: 'Food App',
+      theme: ThemeData(primarySwatch: Colors.red),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => MainHomePage(),
+        '/speciality': (context) => SpecialityPage(),
+        '/popular': (context) => PopularPage(), // Changed to lowercase 'popular'
+        '/gallery': (context) => GalleryPage(), // Changed to lowercase 'popular'
+      },
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class MainHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10,
-              spreadRadius: 2,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Row(
+          children: [
+            Icon(Icons.restaurant_menu, color: Colors.red),
+            SizedBox(width: 8),
+            Text('Food', style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
           ],
         ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.grey,
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
-            BottomNavigationBarItem(icon: Icon(Icons.trip_origin), label: 'Trips'),
-            BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Inbox'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          ],
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.grey.shade300,
-                        child: Icon(Icons.person, size: 30),
-                      ),
-                      SizedBox(height: 8),
-                      Text("Know where you wanna go?",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 8),
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: Text("Start your trips"),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20),
-                Text("Category", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: List.generate(5, (index) => categoryItem()),
-                  ),
-                ),
-                SizedBox(height: 20),
-                Text("Inspiration for your trip", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                Column(
-                  children: List.generate(2, (index) => inspirationItem()),
-                ),
-                SizedBox(height: 20),
-                Text("Free destinations", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                Column(
-                  children: List.generate(2, (index) => inspirationItem()),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget categoryItem() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.grey.shade300,
-            child: Icon(Icons.image, size: 30),
-          ),
-          SizedBox(height: 5),
-          Text("Category"),
+        actions: [
+          _navItem(context, 'Home', '/'),
+          _navItem(context, 'Speciality', '/speciality'),
+          _navItem(context, 'Popular', '/popular'), // Changed to lowercase 'popular'
+          _navItem(context, 'Gallery', '/gallery'),
+          SizedBox(width: 16),
         ],
       ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isMobile = constraints.maxWidth < 600;
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                children: [
+                  Text(
+                    'Food Made With Love',
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 20),
+                  if (!isMobile)
+                    Image.asset('assets/burger.png', height: 400),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
-  Widget inspirationItem() {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 150,
-              color: Colors.grey.shade300,
-              child: Icon(Icons.image, size: 50),
-            ),
-            SizedBox(height: 10),
-            Text("Travel Inspiration", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          ],
-        ),
+  Widget _navItem(BuildContext context, String title, String route) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: TextButton(
+        onPressed: () => Navigator.pushNamed(context, route),
+        child: Text(title, style: TextStyle(color: Colors.black)),
       ),
     );
   }
